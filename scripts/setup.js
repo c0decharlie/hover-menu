@@ -1,6 +1,6 @@
 'use strict';
 
-(function(){
+(function () {
     var menu = new HoverMenu('hover-menu');
     menu.setup();
 }());

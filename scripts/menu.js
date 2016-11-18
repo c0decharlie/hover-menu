@@ -2,38 +2,36 @@
 
 (function (root) {
 
-    function HoverMenu(element) {
-        this.element = document.querySelector('#' + element);
+    function HoverMenu(id) {
+        this.$menuWrapper = document.querySelector('#' + id);
+        this.$mainList = this.$menuWrapper.querySelector('ul');
         this.nestedElements = [];
     }
 
     HoverMenu.prototype.getMenuElements = function () {
-        var $mainList = this.element.querySelector('ul');
-        return $mainList.querySelectorAll('li');
+        return this.$mainList.querySelectorAll('li');
     };
 
     HoverMenu.prototype.getNestedElements = function () {
         var listElements = this.getMenuElements();
-        for (var i = 0; i < listElements.length; i++)
-            if (listElements[i].querySelector('ul') !== null)
-                this.nestedElements.push(listElements[i]);
+        Array.from(listElements).forEach((item) => {
+            if (item.querySelector('ul') !== null)
+                this.nestedElements.push(item);
+        });
     };
 
     HoverMenu.prototype.hoverHandler = function () {
-        var ulElements = this.nestedElements;
-        for (var i = 0; i < ulElements.length; i++) {
-            ulElements[i].addEventListener('mouseenter', this.toggle);
-            ulElements[i].addEventListener('mouseleave', this.toggle);
-        }
+        this.$mainList.addEventListener('mouseenter', this.toggle, true);
+        this.$mainList.addEventListener('mouseout', this.toggle, true);
     };
 
-    HoverMenu.prototype.toggle = function () {
-        var $hiddenElement = this.querySelector('ul');
-        if ($hiddenElement.classList.contains('show')) {
-            $hiddenElement.classList.remove('show');
-        } else {
-            $hiddenElement.classList.add('show')
-        }
+    HoverMenu.prototype.toggle = function (event) {
+       if (event.target.nodeName === "LI") {
+            var nestedList = event.target.querySelector('ul');
+            nestedList.classList.toggle('show');
+       } else {
+           return false;
+       }
     };
 
     HoverMenu.prototype.setup = function () {
