@@ -1,39 +1,64 @@
-'use strict';
-
 (function (root) {
+    'use strict';
 
-    function HoverMenu(element) {
-        this.element = document.querySelector('#' + element);
+    function HoverMenu(id) {
+        this.$menuWrapper = document.querySelector('#' + id);
+        this.$mainList = this.$menuWrapper.querySelector('ul');
+        this.listChildrens = this.$mainList.children;
         this.nestedElements = [];
+        this.extendedElement = null;
     }
 
     HoverMenu.prototype.getMenuElements = function () {
-        var $mainList = this.element.querySelector('ul');
-        return $mainList.querySelectorAll('li');
+        return this.$mainList.querySelectorAll('li');
     };
 
     HoverMenu.prototype.getNestedElements = function () {
         var listElements = this.getMenuElements();
-        for (var i = 0; i < listElements.length; i++)
-            if (listElements[i].querySelector('ul') !== null)
-                this.nestedElements.push(listElements[i]);
+        Array.from(listElements).forEach((item) => {
+            if (item.querySelector('ul') !== null)
+                this.nestedElements.push(item);
+        });
     };
 
     HoverMenu.prototype.hoverHandler = function () {
-        var ulElements = this.nestedElements;
-        for (var i = 0; i < ulElements.length; i++) {
-            ulElements[i].addEventListener('mouseenter', this.toggle);
-            ulElements[i].addEventListener('mouseleave', this.toggle);
+        this.$mainList.addEventListener('mouseover', this.change.bind(this), false);
+        this.$mainList.addEventListener('mouseleave', this.close.bind(this), false);
+    };
+
+    HoverMenu.prototype.change = function (event) {
+        var currentElement = event.target;
+        var nestedList = currentElement.parentNode.querySelector('ul');
+        var containsUl = currentElement.querySelector('ul');
+        var isNestedElement = this.nestedElements.indexOf(currentElement.parentNode);
+
+        if (isNestedElement >= 0) {
+            if (this.extendedElement === null) {
+                this.open(nestedList);
+            }  else {
+                this.close();
+                this.open(nestedList);
+            }
+        } else if (this.isChildren(currentElement.parentNode)) {
+            this.close();
         }
     };
 
-    HoverMenu.prototype.toggle = function () {
-        var $hiddenElement = this.querySelector('ul');
-        if ($hiddenElement.classList.contains('show')) {
-            $hiddenElement.classList.remove('show');
-        } else {
-            $hiddenElement.classList.add('show')
-        }
+    HoverMenu.prototype.isChildren = function(element) {
+        var childrenCollection = Array.from(this.listChildrens);
+        var isDirectChild = childrenCollection.indexOf(element);
+        return isDirectChild >= 0 ? true : false;
+    };
+
+    HoverMenu.prototype.open = function (element) {
+        element.classList.add('show');
+        this.extendedElement = element;
+    };
+
+    HoverMenu.prototype.close = function () {
+        console.log(this.extendedElement.classList.contains('show'));
+        this.extendedElement.classList.remove('show');
+        this.extendedElement = null;
     };
 
     HoverMenu.prototype.setup = function () {
