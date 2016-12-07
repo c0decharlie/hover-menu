@@ -28,12 +28,13 @@
     HoverMenu.prototype.change = function (event) {
         var currentElement = event.target;
         var nestedList = currentElement.parentNode.querySelector('ul');
+        var containsUl = currentElement.querySelector('ul');
         var isNestedElement = this.nestedElements.indexOf(currentElement.parentNode);
-        console.log(nestedList);
+
         if (isNestedElement >= 0) {
             if (this.extendedElement === null) {
                 this.open(nestedList);
-            } else {
+            }  else {
                 this.close();
                 this.open(nestedList);
             }
