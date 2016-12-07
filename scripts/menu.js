@@ -4,6 +4,7 @@
     function HoverMenu(id) {
         this.$menuWrapper = document.querySelector('#' + id);
         this.$mainList = this.$menuWrapper.querySelector('ul');
+        this.listChildrens = this.$mainList.children;
         this.nestedElements = [];
         this.extendedElement = null;
     }
@@ -38,7 +39,15 @@
                 this.close();
                 this.open(nestedList);
             }
+        } else if (this.isChildren(currentElement.parentNode)) {
+            this.close();
         }
+    };
+
+    HoverMenu.prototype.isChildren = function(element) {
+        var childrenCollection = Array.from(this.listChildrens);
+        var isDirectChild = childrenCollection.indexOf(element);
+        return isDirectChild >= 0 ? true : false;
     };
 
     HoverMenu.prototype.open = function (element) {
@@ -47,6 +56,7 @@
     };
 
     HoverMenu.prototype.close = function () {
+        console.log(this.extendedElement.classList.contains('show'));
         this.extendedElement.classList.remove('show');
         this.extendedElement = null;
     };
@@ -54,7 +64,6 @@
     HoverMenu.prototype.setup = function () {
         this.getNestedElements();
         this.hoverHandler();
-        console.log(this.nestedElements);
     };
 
     root.HoverMenu = HoverMenu;
