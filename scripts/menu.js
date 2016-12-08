@@ -56,9 +56,10 @@
     };
 
     HoverMenu.prototype.close = function () {
-        console.log(this.extendedElement.classList.contains('show'));
-        this.extendedElement.classList.remove('show');
-        this.extendedElement = null;
+        if(this.extendedElement !== null) {
+            this.extendedElement.classList.remove('show');
+            this.extendedElement = null;
+        }        
     };
 
     HoverMenu.prototype.setup = function () {
